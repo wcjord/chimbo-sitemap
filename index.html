@@ -6,6 +6,7 @@
 <title>Chimborazo Native Food Project — Site Map</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
     --bg:#1c1a17; --panel:#26231f; --panel2:#2f2b26; --ink:#f2ede4; --dim:#a89e8f;
@@ -26,14 +27,17 @@
   .tool svg{width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .tool.active{border-color:var(--accent);background:#33402d}
   .tool.active svg{stroke:var(--accent)}
+  .tool:disabled{opacity:.4;cursor:not-allowed}
   .hint{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.45;min-height:16px}
   .row{display:flex;align-items:center;gap:8px;margin:6px 0}
   .row label{font-size:12px;flex:1}
   input[type=range]{flex:1;accent-color:var(--accent)}
   input[type=checkbox]{accent-color:var(--accent)}
+  input[type=email]{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:7px;font-size:12px;font-family:inherit}
   button.small{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 9px;font-size:11px;cursor:pointer}
   button.small:hover{border-color:var(--dim)}
   button.danger{color:#e08b6d}
+  #drawActions{display:none;margin-top:8px;gap:6px}
   #featList{display:flex;flex-direction:column;gap:2px}
   .feat{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;font-size:12px;cursor:pointer}
   .feat:hover{background:var(--panel2)}
@@ -53,6 +57,10 @@
   .maplibregl-canvas{cursor:crosshair}
   body.mode-none .maplibregl-canvas{cursor:grab}
   .taskbadge{font-size:10px;background:var(--task);color:#fff;border-radius:4px;padding:1px 5px}
+  .pill{font-size:10px;border-radius:4px;padding:1px 6px;background:#33402d;color:var(--accent)}
+  .pill.ro{background:#3c372f;color:var(--dim)}
+  #syncDot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:5px}
+  #syncDot.err{background:#e08b6d}
   footer{padding:10px 16px;margin-top:auto;font-size:10px;color:var(--dim);line-height:1.5}
   a{color:var(--accent2)}
 </style>
@@ -61,14 +69,32 @@
 <div id="side">
   <header>
     <h1>Chimborazo Native Food Project</h1>
-    <div class="sub">Site map · living prototype · saved in this browser</div>
+    <div class="sub"><span id="syncDot"></span><span id="syncLabel">shared site map</span></div>
   </header>
+
+  <section id="authBox">
+    <h2>Stewards</h2>
+    <div id="authOut">
+      <input type="email" id="authEmail" placeholder="you@example.com">
+      <div style="display:flex;gap:6px;margin-top:7px;align-items:center">
+        <button class="small" id="btnMagic">Email me a sign-in link</button>
+      </div>
+      <div class="hint">Anyone can view. Stewards sign in to edit — no password, just a link in your email.</div>
+    </div>
+    <div id="authIn" style="display:none">
+      <div class="row" style="justify-content:space-between">
+        <span style="font-size:12px" id="authWho"></span>
+        <span class="pill" id="authRole">steward</span>
+      </div>
+      <button class="small" id="btnSignOut">Sign out</button>
+    </div>
+  </section>
 
   <section>
     <h2>Add to the map</h2>
     <div class="palette" id="palette"></div>
     <div class="hint" id="hint">Pick a tool, then click the map. Click any feature to edit it.</div>
-    <div id="drawActions" style="display:none;margin-top:8px;gap:6px">
+    <div id="drawActions">
       <button class="small" id="btnFinish" style="border-color:var(--accent);color:var(--accent)">✓ Finish shape</button>
       <button class="small" id="btnCancel">Cancel</button>
     </div>
@@ -97,12 +123,10 @@
   <section>
     <h2>Data</h2>
     <button class="small" id="btnExport">Export GeoJSON</button>
-    <button class="small" id="btnImport">Import</button>
-    <button class="small danger" id="btnClear">Clear all</button>
-    <input type="file" id="importInput" accept=".json,.geojson" style="display:none">
+    <button class="small" id="btnRefresh">Refresh</button>
   </section>
 
-  <footer>Basemap © Esri World Imagery · Parcels &amp; park boundary © City of Richmond GIS · Prototype — data lives only in this browser until exported.</footer>
+  <footer>Basemap © Esri World Imagery · Parcels &amp; park boundary © City of Richmond GIS · Shared map — edits by signed-in stewards are visible to everyone.</footer>
 </div>
 <div id="map"></div>
 
@@ -119,9 +143,14 @@
 </div>
 
 <script>
-// one canonical origin — http and https have separate localStorage, which made data "vanish" between visits
+// one canonical origin — http and https have separate auth/storage
 if(location.protocol==='http:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1')
   location.replace('https://'+location.host+location.pathname+location.search);
+
+const SB_URL='https://qythjcoxbwwmdmevvpdx.supabase.co';
+const SB_KEY='sb_publishable_Ic_6BjCADfZN8wVlrMCTgA_WhbMFh3j';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+
 const PARK_CENTER=[-77.41142,37.52551];
 const KINDS={
   tree:  {label:'Tree',  geom:'point', color:'#7cb46b', icon:'M12 21v-6M12 15c-4 0-6-2.5-6-5.5C6 6 9 3 12 3s6 3 6 6.5c0 3-2 5.5-6 5.5z'},
@@ -133,28 +162,104 @@ const KINDS={
   zone:  {label:'Zone',  geom:'polygon',color:'#7f8fc9', icon:'M5 5l6-2 8 4-2 12-9 2-5-6z'},
   path:  {label:'Path',  geom:'line',  color:'#c9c3b4', icon:'M4 20c4-1 3-6 7-7s3-6 9-8'}
 };
-let mode=null, drawPts=[], selId=null, editingOvl=null;
-let data=load('cnf_features',{type:'FeatureCollection',features:[]});
-let overlays=load('cnf_overlays',[]);
-function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
-function save(){try{localStorage.setItem('cnf_features',JSON.stringify(data));localStorage.setItem('cnf_overlays',JSON.stringify(overlays))}catch(e){hint('Storage full — export your data and remove an overlay image.')}}
-function uid(){return Math.random().toString(36).slice(2,9)}
+let mode=null, drawPts=[], selId=null, editingOvl=null, canEdit=false;
+let data={type:'FeatureCollection',features:[]};
+let overlays=[];
+function uid(){return Math.random().toString(36).slice(2,10)}
 function hint(t){document.getElementById('hint').textContent=t}
+function sync(ok,label){const d=document.getElementById('syncDot');d.classList.toggle('err',!ok);
+  document.getElementById('syncLabel').textContent=label}
 
+// ---------- supabase data ----------
+async function fetchAll(){
+  const [f,o]=await Promise.all([
+    sb.from('features').select('geojson'),
+    sb.from('overlays').select('*').order('created_at')
+  ]);
+  if(f.error||o.error){sync(false,'offline — showing last loaded');console.warn(f.error||o.error);return}
+  data={type:'FeatureCollection',features:f.data.map(r=>r.geojson)};
+  const prev=new Set(overlays.map(x=>x.id));
+  overlays=o.data.map(r=>({id:r.id,name:r.name,url:r.image_url,center:r.center,widthM:r.width_m,aspect:r.aspect,rot:r.rot,opacity:r.opacity}));
+  if(map.loaded()){
+    overlays.forEach(x=>{if(!map.getSource('ovl-'+x.id))addOverlayToMap(x)});
+    [...prev].filter(id=>!overlays.find(x=>x.id===id)).forEach(id=>{
+      if(map.getLayer('ovl-'+id)){map.removeLayer('ovl-'+id);map.removeSource('ovl-'+id)}});
+    overlays.forEach(updateOverlay);
+  }
+  refresh();renderOvlList();
+  sync(true,'shared site map — up to date');
+}
+async function dbUpsertFeature(f){
+  const {error}=await sb.from('features').upsert({id:f.id,geojson:f,updated_at:new Date().toISOString()});
+  if(error){sync(false,'save failed — are you signed in as a steward?');console.warn(error)}
+  else sync(true,'shared site map — saved');
+}
+async function dbDeleteFeature(id){
+  const {error}=await sb.from('features').delete().eq('id',id);
+  if(error)sync(false,'delete failed — are you signed in as a steward?');
+}
+const debounces={};
+function debounceUpsert(f){clearTimeout(debounces[f.id]);debounces[f.id]=setTimeout(()=>dbUpsertFeature(f),600)}
+
+// ---------- auth ----------
+async function refreshAuth(){
+  const {data:{session}}=await sb.auth.getSession();
+  const out=document.getElementById('authOut'),inn=document.getElementById('authIn');
+  if(!session){canEdit=false;out.style.display='block';inn.style.display='none'}
+  else{
+    out.style.display='none';inn.style.display='block';
+    document.getElementById('authWho').textContent=session.user.email;
+    const {data:st}=await sb.rpc('is_steward');
+    canEdit=!!st;
+    const role=document.getElementById('authRole');
+    role.textContent=canEdit?'steward':'view only';
+    role.className='pill'+(canEdit?'':' ro');
+    if(canEdit)maybeMigrateLocal();
+  }
+  document.querySelectorAll('.tool').forEach(b=>b.disabled=!canEdit);
+  document.getElementById('btnUpload').disabled=!canEdit;
+  if(!canEdit)hint('Viewing the shared map. Sign in as a steward to add or edit.');
+  else hint('Pick a tool, then click the map. Click any feature to edit it.');
+}
+document.getElementById('btnMagic').onclick=async()=>{
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email)return;
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
+  hint(error?('Could not send link: '+error.message):'Link sent — check your email on this device.');
+};
+document.getElementById('btnSignOut').onclick=async()=>{await sb.auth.signOut();refreshAuth()};
+sb.auth.onAuthStateChange(()=>refreshAuth());
+
+// one-time migration of pre-database local drawings
+async function maybeMigrateLocal(){
+  try{
+    const old=JSON.parse(localStorage.getItem('cnf_features')||'null');
+    if(!old?.features?.length)return;
+    const have=new Set(data.features.map(f=>f.id));
+    const orphans=old.features.filter(f=>!have.has(f.id));
+    if(!orphans.length){localStorage.removeItem('cnf_features');return}
+    if(confirm(`Found ${orphans.length} drawing(s) saved only in this browser from before the shared database. Upload them to the shared map?`)){
+      for(const f of orphans)await dbUpsertFeature(f);
+      localStorage.removeItem('cnf_features');
+      fetchAll();
+    }
+  }catch(e){}
+}
+
+// ---------- map ----------
 const map=new maplibregl.Map({
-  container:'map',center:PARK_CENTER,zoom:17.2,maxZoom:23,bearing:0,attributionControl:false,
+  container:'map',center:PARK_CENTER,zoom:17.2,maxZoom:23,attributionControl:false,
   style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',sources:{
     esri:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19}
   },layers:[{id:'base',type:'raster',source:'esri'}]}
 });
 map.addControl(new maplibregl.NavigationControl({showCompass:true}),'bottom-right');
-new ResizeObserver(()=>map.resize()).observe(document.getElementById('map'));
 map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-left');
+new ResizeObserver(()=>map.resize()).observe(document.getElementById('map'));
 
-// ---------- palette ----------
 const pal=document.getElementById('palette');
 for(const [k,v] of Object.entries(KINDS)){
-  const b=document.createElement('button');b.className='tool';b.dataset.kind=k;
+  const b=document.createElement('button');b.className='tool';b.dataset.kind=k;b.disabled=true;
   b.innerHTML=`<svg viewBox="0 0 24 24"><path d="${v.icon}"/></svg>${v.label}`;
   b.onclick=()=>setMode(mode===k?null:k);
   pal.appendChild(b);
@@ -165,7 +270,7 @@ function canFinish(){
   return (g==='polygon'&&drawPts.length>=3)||(g==='line'&&drawPts.length>=2);
 }
 function setMode(k){
-  if(canFinish())finishDraw();          // switching tools mid-draw keeps your shape
+  if(canFinish())finishDraw();
   mode=k;drawPts=[];updateDraft();updateDrawUI();
   if(k&&KINDS[k].geom!=='point')map.doubleClickZoom.disable();else map.doubleClickZoom.enable();
   document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.kind===mode));
@@ -179,7 +284,7 @@ function updateDrawUI(){
 }
 window.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    if(canFinish())finishDraw();        // Esc keeps a valid shape too — cancel is its own button
+    if(canFinish())finishDraw();
     setMode(null);closeEditor();
   }
   if(e.key==='Enter'&&canFinish())finishDraw();
@@ -187,7 +292,6 @@ window.addEventListener('keydown',e=>{
 document.getElementById('btnFinish').onclick=()=>{if(canFinish())finishDraw()};
 document.getElementById('btnCancel').onclick=()=>{drawPts=[];updateDraft();updateDrawUI()};
 
-// ---------- data layers ----------
 map.on('load',async()=>{
   map.addSource('site',{type:'geojson',data});
   map.addSource('draft',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -196,7 +300,6 @@ map.on('load',async()=>{
 
   map.addLayer({id:'park-line',type:'line',source:'park',paint:{'line-color':'#d9a441','line-width':2,'line-dasharray':[3,2],'line-opacity':.8}});
   map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffffff','line-width':.7,'line-opacity':.35}});
-
   map.addLayer({id:'site-poly',type:'fill',source:'site',filter:['==',['geometry-type'],'Polygon'],
     paint:{'fill-color':['coalesce',['get','color'],'#888'],'fill-opacity':.28}});
   map.addLayer({id:'site-poly-line',type:'line',source:'site',filter:['==',['geometry-type'],'Polygon'],
@@ -215,10 +318,12 @@ map.on('load',async()=>{
   map.addLayer({id:'draft-pt',type:'circle',source:'draft',filter:['==',['geometry-type'],'Point'],
     paint:{'circle-radius':3.5,'circle-color':'#fff'}});
 
-  overlays.forEach(addOverlayToMap);
-  refresh();
+  await fetchAll();
+  overlays.forEach(o=>{if(!map.getSource('ovl-'+o.id))addOverlayToMap(o)});
   loadCityData();
 });
+window.addEventListener('focus',()=>fetchAll());
+setInterval(()=>fetchAll(),45000);
 
 async function loadCityData(){
   const B='https://services1.arcgis.com/k3vhq11XkBNeeOfM/arcgis/rest/services';
@@ -237,12 +342,12 @@ async function loadCityData(){
 map.on('click',e=>{
   if(editingOvl)return;
   if(!mode){trySelect(e);return}
+  if(!canEdit){hint('Sign in as a steward to edit.');return}
   const k=KINDS[mode];
   if(k.geom==='point'){
     addFeature({type:'Feature',id:uid(),geometry:{type:'Point',coordinates:[e.lngLat.lng,e.lngLat.lat]},
       properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
   }else{
-    // clicking the first corner again closes a polygon
     if(KINDS[mode].geom==='polygon'&&drawPts.length>=3){
       const p0=map.project(drawPts[0]);
       if(Math.hypot(p0.x-e.point.x,p0.y-e.point.y)<14){finishDraw();return}
@@ -260,7 +365,6 @@ function updateDraft(){
 }
 function finishDraw(){
   const k=KINDS[mode];
-  // drop duplicate trailing vertices left by the double-click's own click events
   while(drawPts.length>1){
     const a=drawPts[drawPts.length-1],b=drawPts[drawPts.length-2];
     if(Math.abs(a[0]-b[0])<1e-7&&Math.abs(a[1]-b[1])<1e-7)drawPts.pop();else break;
@@ -277,22 +381,28 @@ function finishDraw(){
 function addFeature(f){
   const n=data.features.filter(x=>x.properties.kind===f.properties.kind).length+1;
   f.properties.name=`${KINDS[f.properties.kind].label} ${n}`;
-  data.features.push(f);save();refresh();openEditor(f.id);
+  data.features.push(f);refresh();openEditor(f.id);
+  dbUpsertFeature(f);
 }
 
 // ---------- selection / editor ----------
 function trySelect(e){
   const hits=map.queryRenderedFeatures(e.point,{layers:['site-pt','site-poly','site-line']});
-  if(hits.length)openEditor(hits[0].id??hits[0].properties.id??findByGeom(hits[0]));
+  if(hits.length){
+    const f=data.features.find(x=>x.properties.name===hits[0].properties.name);
+    if(f)openEditor(f.id);
+  }
   else closeEditor();
 }
-function findByGeom(h){const f=data.features.find(x=>x.properties.name===h.properties.name);return f?.id}
 const ed=document.getElementById('editor');
 const kindSel=document.getElementById('edKind');
 for(const [k,v] of Object.entries(KINDS)){const o=document.createElement('option');o.value=k;o.textContent=v.label;kindSel.appendChild(o)}
 function openEditor(id){
   const f=data.features.find(x=>x.id===id);if(!f)return;
   selId=id;ed.style.display='block';
+  const dis=!canEdit;
+  ['edName','edKind','edNotes','edTask','edDone'].forEach(i=>document.getElementById(i).disabled=dis);
+  document.getElementById('edDelete').style.display=dis?'none':'inline-block';
   document.getElementById('edName').value=f.properties.name||'';
   kindSel.value=f.properties.kind;
   document.getElementById('edNotes').value=f.properties.notes||'';
@@ -307,13 +417,15 @@ function bindEd(id,prop,attr){document.getElementById(id).addEventListener('inpu
   f.properties[prop]=attr?e.target[attr]:e.target.value;
   if(prop==='kind')f.properties.color=KINDS[f.properties.kind].color;
   if(prop==='task')document.getElementById('edDoneRow').style.display=e.target.checked?'flex':'none';
-  save();refresh();
+  refresh();debounceUpsert(f);
 })}
 bindEd('edName','name');bindEd('edKind','kind');bindEd('edNotes','notes');
 bindEd('edTask','task','checked');bindEd('edDone','done','checked');
 document.getElementById('edClose').onclick=closeEditor;
 document.getElementById('edDelete').onclick=()=>{
-  data.features=data.features.filter(x=>x.id!==selId);save();refresh();closeEditor();
+  const id=selId;
+  data.features=data.features.filter(x=>x.id!==id);refresh();closeEditor();
+  dbDeleteFeature(id);
 };
 
 // ---------- list ----------
@@ -335,7 +447,7 @@ function refreshList(){
     el.appendChild(d);
   }
 }
-function esc(s){return s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
+function esc(s){return (s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
 function flyTo(f){
   const g=f.geometry;
   let c=g.type==='Point'?g.coordinates:(g.type==='Polygon'?g.coordinates[0][0]:g.coordinates[0]);
@@ -352,16 +464,25 @@ document.getElementById('btnUpload').onclick=()=>document.getElementById('fileIn
 document.getElementById('fileInput').addEventListener('change',e=>{
   const file=e.target.files[0];if(!file)return;
   const img=new Image();
-  img.onload=()=>{
+  img.onload=async()=>{
     const cv=document.createElement('canvas');
-    const scale=Math.min(1,1600/Math.max(img.width,img.height));
+    const scale=Math.min(1,2000/Math.max(img.width,img.height));
     cv.width=img.width*scale;cv.height=img.height*scale;
     cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
-    const url=cv.toDataURL('image/jpeg',.82);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.85));
+    const id=uid();
+    sync(true,'uploading image…');
+    const {error:upErr}=await sb.storage.from('overlays').upload(id+'.jpg',blob,{contentType:'image/jpeg'});
+    if(upErr){sync(false,'image upload failed — signed in as a steward?');return}
+    const {data:{publicUrl}}=sb.storage.from('overlays').getPublicUrl(id+'.jpg');
     const c=map.getCenter();
-    const o={id:uid(),name:file.name.replace(/\.[^.]+$/,''),url,
+    const o={id,name:file.name.replace(/\.[^.]+$/,''),url:publicUrl,
       center:[c.lng,c.lat],widthM:120,aspect:cv.height/cv.width,rot:0,opacity:.8};
-    overlays.push(o);save();addOverlayToMap(o);renderOvlList();
+    const {error}=await sb.from('overlays').insert({id,name:o.name,image_url:o.url,center:o.center,
+      width_m:o.widthM,aspect:o.aspect,rot:o.rot,opacity:o.opacity});
+    if(error){sync(false,'overlay save failed');return}
+    overlays.push(o);addOverlayToMap(o);renderOvlList();
+    sync(true,'shared site map — saved');
   };
   img.src=URL.createObjectURL(file);
   e.target.value='';
@@ -380,8 +501,17 @@ function addOverlayToMap(o){
   map.addLayer({id:'ovl-'+o.id,type:'raster',source:'ovl-'+o.id,paint:{'raster-opacity':o.opacity,'raster-fade-duration':0}},before);
 }
 function updateOverlay(o){
-  map.getSource('ovl-'+o.id).setCoordinates(ovlCorners(o));
+  const s=map.getSource('ovl-'+o.id);if(!s)return;
+  s.setCoordinates(ovlCorners(o));
   map.setPaintProperty('ovl-'+o.id,'raster-opacity',o.opacity);
+}
+const ovlDeb={};
+function dbUpdateOverlay(o){
+  clearTimeout(ovlDeb[o.id]);
+  ovlDeb[o.id]=setTimeout(async()=>{
+    const {error}=await sb.from('overlays').update({center:o.center,width_m:o.widthM,rot:o.rot,opacity:o.opacity}).eq('id',o.id);
+    if(error)sync(false,'overlay save failed — signed in?');
+  },600);
 }
 function renderOvlList(){
   const el=document.getElementById('ovlList');el.innerHTML='';
@@ -389,28 +519,30 @@ function renderOvlList(){
     const d=document.createElement('div');d.className='ovl';
     d.innerHTML=`<div class="nm">${esc(o.name)}
         <span>
-          <button class="small" data-a="move">${editingOvl===o.id?'placing…':'place'}</button>
-          <button class="small danger" data-a="del">✕</button>
+          <button class="small" data-a="move" ${canEdit?'':'disabled'}>${editingOvl===o.id?'placing…':'place'}</button>
+          <button class="small danger" data-a="del" ${canEdit?'':'disabled'}>✕</button>
         </span></div>
       <div class="ctl">fade<input type="range" min="0" max="1" step=".05" value="${o.opacity}" data-a="op"></div>
-      <div class="ctl">size<input type="range" min="10" max="600" step="2" value="${o.widthM}" data-a="w"></div>
-      <div class="ctl">rotate<input type="range" min="-180" max="180" step="1" value="${o.rot}" data-a="r"></div>`;
+      <div class="ctl">size<input type="range" min="10" max="600" step="2" value="${o.widthM}" data-a="w" ${canEdit?'':'disabled'}></div>
+      <div class="ctl">rotate<input type="range" min="-180" max="180" step="1" value="${o.rot}" data-a="r" ${canEdit?'':'disabled'}></div>`;
     d.querySelector('[data-a=move]').onclick=()=>{
       editingOvl=editingOvl===o.id?null:o.id;
       hint(editingOvl?'Drag on the map to move the overlay. Click "placing…" again to finish.':'');
       renderOvlList();
     };
-    d.querySelector('[data-a=del]').onclick=()=>{
+    d.querySelector('[data-a=del]').onclick=async()=>{
+      if(!confirm('Remove this overlay for everyone?'))return;
       map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id);
-      overlays=overlays.filter(x=>x.id!==o.id);save();renderOvlList();
+      overlays=overlays.filter(x=>x.id!==o.id);renderOvlList();
+      await sb.from('overlays').delete().eq('id',o.id);
+      await sb.storage.from('overlays').remove([o.id+'.jpg']);
     };
-    d.querySelector('[data-a=op]').oninput=e=>{o.opacity=+e.target.value;save();updateOverlay(o)};
-    d.querySelector('[data-a=w]').oninput=e=>{o.widthM=+e.target.value;save();updateOverlay(o)};
-    d.querySelector('[data-a=r]').oninput=e=>{o.rot=+e.target.value;save();updateOverlay(o)};
+    d.querySelector('[data-a=op]').oninput=e=>{o.opacity=+e.target.value;updateOverlay(o);if(canEdit)dbUpdateOverlay(o)};
+    d.querySelector('[data-a=w]').oninput=e=>{o.widthM=+e.target.value;updateOverlay(o);dbUpdateOverlay(o)};
+    d.querySelector('[data-a=r]').oninput=e=>{o.rot=+e.target.value;updateOverlay(o);dbUpdateOverlay(o)};
     el.appendChild(d);
   }
 }
-renderOvlList();
 let dragging=false;
 map.on('mousedown',e=>{if(editingOvl){dragging=true;map.dragPan.disable();e.preventDefault()}});
 map.on('mousemove',e=>{
@@ -418,33 +550,18 @@ map.on('mousemove',e=>{
     const o=overlays.find(x=>x.id===editingOvl);
     o.center=[e.lngLat.lng,e.lngLat.lat];updateOverlay(o);
   }});
-map.on('mouseup',()=>{if(dragging){dragging=false;map.dragPan.enable();save()}});
+map.on('mouseup',()=>{if(dragging){dragging=false;map.dragPan.enable();
+  const o=overlays.find(x=>x.id===editingOvl);if(o)dbUpdateOverlay(o)}});
 
-// ---------- import / export ----------
+// ---------- export / refresh ----------
 document.getElementById('btnExport').onclick=()=>{
   const blob=new Blob([JSON.stringify({...data,overlays},null,1)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='chimborazo-native-food-sitemap.geojson';a.click();
 };
-document.getElementById('btnImport').onclick=()=>document.getElementById('importInput').click();
-document.getElementById('importInput').addEventListener('change',e=>{
-  const r=new FileReader();
-  r.onload=()=>{try{
-    const d=JSON.parse(r.result);
-    if(d.features){data.features=d.features;}
-    if(d.overlays){
-      overlays.forEach(o=>{if(map.getLayer('ovl-'+o.id)){map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id)}});
-      overlays=d.overlays;overlays.forEach(addOverlayToMap);renderOvlList();
-    }
-    save();refresh();
-  }catch(err){alert('Could not read that file.')}};
-  r.readAsText(e.target.files[0]);e.target.value='';
-});
-document.getElementById('btnClear').onclick=()=>{
-  if(!confirm('Delete all features and overlays from this browser?'))return;
-  overlays.forEach(o=>{if(map.getLayer('ovl-'+o.id)){map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id)}});
-  data={type:'FeatureCollection',features:[]};overlays=[];save();refresh();renderOvlList();
-};
+document.getElementById('btnRefresh').onclick=()=>fetchAll();
+
+refreshAuth();
 </script>
 </body>
 </html>
