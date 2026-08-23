@@ -115,6 +115,9 @@
 </div>
 
 <script>
+// one canonical origin — http and https have separate localStorage, which made data "vanish" between visits
+if(location.protocol==='http:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1')
+  location.replace('https://'+location.host+location.pathname+location.search);
 const PARK_CENTER=[-77.41142,37.52551];
 const KINDS={
   tree:  {label:'Tree',  geom:'point', color:'#7cb46b', icon:'M12 21v-6M12 15c-4 0-6-2.5-6-5.5C6 6 9 3 12 3s6 3 6 6.5c0 3-2 5.5-6 5.5z'},
