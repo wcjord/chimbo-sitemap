@@ -67,7 +67,11 @@
   <section>
     <h2>Add to the map</h2>
     <div class="palette" id="palette"></div>
-    <div class="hint" id="hint">Pick a tool, then click the map. Esc cancels. Click any feature to edit it.</div>
+    <div class="hint" id="hint">Pick a tool, then click the map. Click any feature to edit it.</div>
+    <div id="drawActions" style="display:none;margin-top:8px;gap:6px">
+      <button class="small" id="btnFinish" style="border-color:var(--accent);color:var(--accent)">✓ Finish shape</button>
+      <button class="small" id="btnCancel">Cancel</button>
+    </div>
   </section>
 
   <section>
@@ -155,19 +159,33 @@ for(const [k,v] of Object.entries(KINDS)){
   b.onclick=()=>setMode(mode===k?null:k);
   pal.appendChild(b);
 }
+function canFinish(){
+  if(!mode)return false;
+  const g=KINDS[mode].geom;
+  return (g==='polygon'&&drawPts.length>=3)||(g==='line'&&drawPts.length>=2);
+}
 function setMode(k){
-  mode=k;drawPts=[];updateDraft();
+  if(canFinish())finishDraw();          // switching tools mid-draw keeps your shape
+  mode=k;drawPts=[];updateDraft();updateDrawUI();
   if(k&&KINDS[k].geom!=='point')map.doubleClickZoom.disable();else map.doubleClickZoom.enable();
   document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.kind===mode));
   document.body.classList.toggle('mode-none',!mode);
-  if(!k)hint('Pick a tool, then click the map. Esc cancels. Click any feature to edit it.');
+  if(!k)hint('Pick a tool, then click the map. Click any feature to edit it.');
   else if(KINDS[k].geom==='point')hint(`Click the map to place a ${KINDS[k].label.toLowerCase()}. Esc to stop.`);
-  else hint(`Click to add corners; double-click (or Enter) to finish the ${KINDS[k].label.toLowerCase()}.`);
+  else hint(`Click to add corners, then hit “Finish shape” (or double-click, Enter, or click your first corner again).`);
+}
+function updateDrawUI(){
+  document.getElementById('drawActions').style.display=canFinish()?'flex':'none';
 }
 window.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){setMode(null);closeEditor()}
-  if(e.key==='Enter'&&mode&&drawPts.length>1)finishDraw();
+  if(e.key==='Escape'){
+    if(canFinish())finishDraw();        // Esc keeps a valid shape too — cancel is its own button
+    setMode(null);closeEditor();
+  }
+  if(e.key==='Enter'&&canFinish())finishDraw();
 });
+document.getElementById('btnFinish').onclick=()=>{if(canFinish())finishDraw()};
+document.getElementById('btnCancel').onclick=()=>{drawPts=[];updateDraft();updateDrawUI()};
 
 // ---------- data layers ----------
 map.on('load',async()=>{
@@ -224,7 +242,12 @@ map.on('click',e=>{
     addFeature({type:'Feature',id:uid(),geometry:{type:'Point',coordinates:[e.lngLat.lng,e.lngLat.lat]},
       properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
   }else{
-    drawPts.push([e.lngLat.lng,e.lngLat.lat]);updateDraft();
+    // clicking the first corner again closes a polygon
+    if(KINDS[mode].geom==='polygon'&&drawPts.length>=3){
+      const p0=map.project(drawPts[0]);
+      if(Math.hypot(p0.x-e.point.x,p0.y-e.point.y)<14){finishDraw();return}
+    }
+    drawPts.push([e.lngLat.lng,e.lngLat.lat]);updateDraft();updateDrawUI();
   }
 });
 map.on('dblclick',e=>{if(mode&&KINDS[mode].geom!=='point'){e.preventDefault();finishDraw()}});
@@ -249,7 +272,7 @@ function finishDraw(){
     addFeature({type:'Feature',id:uid(),geometry:{type:'LineString',coordinates:drawPts},
       properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
   }
-  drawPts=[];updateDraft();
+  drawPts=[];updateDraft();updateDrawUI();
 }
 function addFeature(f){
   const n=data.features.filter(x=>x.properties.kind===f.properties.kind).length+1;
