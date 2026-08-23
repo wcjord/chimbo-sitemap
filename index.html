@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chimborazo Native Food Project — Site Map</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root{
+    --bg:#1c1a17; --panel:#26231f; --panel2:#2f2b26; --ink:#f2ede4; --dim:#a89e8f;
+    --accent:#7cb46b; --accent2:#d9a441; --task:#e2793e; --line:#3c372f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Avenir Next",Avenir,system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;overflow:hidden}
+  #map{flex:1;height:100vh}
+  #side{width:300px;min-width:300px;height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+  header{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+  header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.02em}
+  header .sub{font-size:11px;color:var(--dim);margin-top:3px}
+  section{padding:12px 16px;border-bottom:1px solid var(--line)}
+  h2{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin:0 0 8px;font-weight:600}
+  .palette{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .tool{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--ink);
+    padding:8px 4px;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .tool svg{width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tool.active{border-color:var(--accent);background:#33402d}
+  .tool.active svg{stroke:var(--accent)}
+  .hint{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.45;min-height:16px}
+  .row{display:flex;align-items:center;gap:8px;margin:6px 0}
+  .row label{font-size:12px;flex:1}
+  input[type=range]{flex:1;accent-color:var(--accent)}
+  input[type=checkbox]{accent-color:var(--accent)}
+  button.small{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 9px;font-size:11px;cursor:pointer}
+  button.small:hover{border-color:var(--dim)}
+  button.danger{color:#e08b6d}
+  #featList{display:flex;flex-direction:column;gap:2px}
+  .feat{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;font-size:12px;cursor:pointer}
+  .feat:hover{background:var(--panel2)}
+  .feat.sel{background:#33402d}
+  .feat .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .feat .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .feat .flag{font-size:10px;color:var(--task);font-weight:600}
+  .ovl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px}
+  .ovl .nm{font-size:12px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+  .ovl .ctl{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--dim);margin-top:3px}
+  .ovl .ctl input[type=range]{height:14px}
+  #editor{position:absolute;right:12px;top:12px;width:240px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:12px;display:none;z-index:10;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+  #editor input[type=text],#editor textarea,#editor select{width:100%;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);border-radius:6px;padding:6px;font-size:12px;font-family:inherit;margin-bottom:7px}
+  #editor textarea{resize:vertical;min-height:52px}
+  .maplibregl-canvas{cursor:crosshair}
+  body.mode-none .maplibregl-canvas{cursor:grab}
+  .taskbadge{font-size:10px;background:var(--task);color:#fff;border-radius:4px;padding:1px 5px}
+  footer{padding:10px 16px;margin-top:auto;font-size:10px;color:var(--dim);line-height:1.5}
+  a{color:var(--accent2)}
+</style>
+</head>
+<body class="mode-none">
+<div id="side">
+  <header>
+    <h1>Chimborazo Native Food Project</h1>
+    <div class="sub">Site map · living prototype · saved in this browser</div>
+  </header>
+
+  <section>
+    <h2>Add to the map</h2>
+    <div class="palette" id="palette"></div>
+    <div class="hint" id="hint">Pick a tool, then click the map. Esc cancels. Click any feature to edit it.</div>
+  </section>
+
+  <section>
+    <h2>Layers</h2>
+    <div class="row"><input type="checkbox" id="lyrParcels" checked><label for="lyrParcels">Parcel lines (city GIS)</label></div>
+    <div class="row"><input type="checkbox" id="lyrPark" checked><label for="lyrPark">Park boundary (city GIS)</label></div>
+    <div class="row"><input type="checkbox" id="lyrLabels" checked><label for="lyrLabels">Feature labels</label></div>
+  </section>
+
+  <section>
+    <h2>Imagery overlays</h2>
+    <div id="ovlList"></div>
+    <button class="small" id="btnUpload">+ Upload image overlay</button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <div class="hint">Drone photo, drawn plan, AI sketch — drop it on the park, then drag to move; sliders size, rotate and fade it.</div>
+  </section>
+
+  <section>
+    <h2>Features <span id="taskCount" class="taskbadge" style="display:none"></span></h2>
+    <div id="featList"></div>
+  </section>
+
+  <section>
+    <h2>Data</h2>
+    <button class="small" id="btnExport">Export GeoJSON</button>
+    <button class="small" id="btnImport">Import</button>
+    <button class="small danger" id="btnClear">Clear all</button>
+    <input type="file" id="importInput" accept=".json,.geojson" style="display:none">
+  </section>
+
+  <footer>Basemap © Esri World Imagery · Parcels &amp; park boundary © City of Richmond GIS · Prototype — data lives only in this browser until exported.</footer>
+</div>
+<div id="map"></div>
+
+<div id="editor">
+  <input type="text" id="edName" placeholder="Name">
+  <select id="edKind"></select>
+  <textarea id="edNotes" placeholder="Notes / observations"></textarea>
+  <div class="row"><input type="checkbox" id="edTask"><label for="edTask" style="font-size:12px">Needs work (task)</label></div>
+  <div class="row" id="edDoneRow" style="display:none"><input type="checkbox" id="edDone"><label for="edDone" style="font-size:12px">Done</label></div>
+  <div style="display:flex;gap:6px;margin-top:4px">
+    <button class="small" id="edClose">Close</button>
+    <button class="small danger" id="edDelete">Delete</button>
+  </div>
+</div>
+
+<script>
+const PARK_CENTER=[-77.41142,37.52551];
+const KINDS={
+  tree:  {label:'Tree',  geom:'point', color:'#7cb46b', icon:'M12 21v-6M12 15c-4 0-6-2.5-6-5.5C6 6 9 3 12 3s6 3 6 6.5c0 3-2 5.5-6 5.5z'},
+  plant: {label:'Plant', geom:'point', color:'#a4c96a', icon:'M12 21v-8M12 13C9 13 7 10 7 7c3 0 5 2 5 6 0-4 2-6 5-6 0 3-2 6-5 6z'},
+  water: {label:'Water', geom:'point', color:'#6aa8c9', icon:'M12 3c3 4.5 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 3-6.5 6-11z'},
+  sign:  {label:'Sign',  geom:'point', color:'#d9a441', icon:'M12 21v-9M6 12V6h12l-2.5 3L18 12H6z'},
+  point: {label:'Marker',geom:'point', color:'#c9b06a', icon:'M12 21s-6-5.5-6-10a6 6 0 1 1 12 0c0 4.5-6 10-6 10zM12 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'},
+  bed:   {label:'Bed',   geom:'polygon',color:'#8a6f4d', icon:'M4 8h16v9H4zM4 12h16'},
+  zone:  {label:'Zone',  geom:'polygon',color:'#7f8fc9', icon:'M5 5l6-2 8 4-2 12-9 2-5-6z'},
+  path:  {label:'Path',  geom:'line',  color:'#c9c3b4', icon:'M4 20c4-1 3-6 7-7s3-6 9-8'}
+};
+let mode=null, drawPts=[], selId=null, editingOvl=null;
+let data=load('cnf_features',{type:'FeatureCollection',features:[]});
+let overlays=load('cnf_overlays',[]);
+function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
+function save(){try{localStorage.setItem('cnf_features',JSON.stringify(data));localStorage.setItem('cnf_overlays',JSON.stringify(overlays))}catch(e){hint('Storage full — export your data and remove an overlay image.')}}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function hint(t){document.getElementById('hint').textContent=t}
+
+const map=new maplibregl.Map({
+  container:'map',center:PARK_CENTER,zoom:17.2,maxZoom:23,bearing:0,attributionControl:false,
+  style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',sources:{
+    esri:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19}
+  },layers:[{id:'base',type:'raster',source:'esri'}]}
+});
+map.addControl(new maplibregl.NavigationControl({showCompass:true}),'bottom-right');
+new ResizeObserver(()=>map.resize()).observe(document.getElementById('map'));
+map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-left');
+
+// ---------- palette ----------
+const pal=document.getElementById('palette');
+for(const [k,v] of Object.entries(KINDS)){
+  const b=document.createElement('button');b.className='tool';b.dataset.kind=k;
+  b.innerHTML=`<svg viewBox="0 0 24 24"><path d="${v.icon}"/></svg>${v.label}`;
+  b.onclick=()=>setMode(mode===k?null:k);
+  pal.appendChild(b);
+}
+function setMode(k){
+  mode=k;drawPts=[];updateDraft();
+  if(k&&KINDS[k].geom!=='point')map.doubleClickZoom.disable();else map.doubleClickZoom.enable();
+  document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.kind===mode));
+  document.body.classList.toggle('mode-none',!mode);
+  if(!k)hint('Pick a tool, then click the map. Esc cancels. Click any feature to edit it.');
+  else if(KINDS[k].geom==='point')hint(`Click the map to place a ${KINDS[k].label.toLowerCase()}. Esc to stop.`);
+  else hint(`Click to add corners; double-click (or Enter) to finish the ${KINDS[k].label.toLowerCase()}.`);
+}
+window.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){setMode(null);closeEditor()}
+  if(e.key==='Enter'&&mode&&drawPts.length>1)finishDraw();
+});
+
+// ---------- data layers ----------
+map.on('load',async()=>{
+  map.addSource('site',{type:'geojson',data});
+  map.addSource('draft',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addSource('parcels',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addSource('park',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+
+  map.addLayer({id:'park-line',type:'line',source:'park',paint:{'line-color':'#d9a441','line-width':2,'line-dasharray':[3,2],'line-opacity':.8}});
+  map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffffff','line-width':.7,'line-opacity':.35}});
+
+  map.addLayer({id:'site-poly',type:'fill',source:'site',filter:['==',['geometry-type'],'Polygon'],
+    paint:{'fill-color':['coalesce',['get','color'],'#888'],'fill-opacity':.28}});
+  map.addLayer({id:'site-poly-line',type:'line',source:'site',filter:['==',['geometry-type'],'Polygon'],
+    paint:{'line-color':['coalesce',['get','color'],'#888'],'line-width':2}});
+  map.addLayer({id:'site-line',type:'line',source:'site',filter:['==',['geometry-type'],'LineString'],
+    paint:{'line-color':['coalesce',['get','color'],'#ccc'],'line-width':3,'line-dasharray':[2,1.2]}});
+  map.addLayer({id:'site-pt-task',type:'circle',source:'site',
+    filter:['all',['==',['geometry-type'],'Point'],['==',['get','task'],true],['!=',['get','done'],true]],
+    paint:{'circle-radius':11,'circle-color':'rgba(0,0,0,0)','circle-stroke-color':'#e2793e','circle-stroke-width':3}});
+  map.addLayer({id:'site-pt',type:'circle',source:'site',filter:['==',['geometry-type'],'Point'],
+    paint:{'circle-radius':6,'circle-color':['coalesce',['get','color'],'#ccc'],'circle-stroke-color':'#1c1a17','circle-stroke-width':1.5}});
+  map.addLayer({id:'site-label',type:'symbol',source:'site',
+    layout:{'text-field':['get','name'],'text-size':11,'text-offset':[0,1.2],'text-anchor':'top','text-font':['Noto Sans Regular']},
+    paint:{'text-color':'#fff','text-halo-color':'rgba(0,0,0,.75)','text-halo-width':1.4}});
+  map.addLayer({id:'draft-line',type:'line',source:'draft',paint:{'line-color':'#fff','line-width':1.5,'line-dasharray':[1,1]}});
+  map.addLayer({id:'draft-pt',type:'circle',source:'draft',filter:['==',['geometry-type'],'Point'],
+    paint:{'circle-radius':3.5,'circle-color':'#fff'}});
+
+  overlays.forEach(addOverlayToMap);
+  refresh();
+  loadCityData();
+});
+
+async function loadCityData(){
+  const B='https://services1.arcgis.com/k3vhq11XkBNeeOfM/arcgis/rest/services';
+  try{
+    const park=await(await fetch(`${B}/Park/FeatureServer/0/query?where=ParkName%20LIKE%20'%25Chimborazo%25'&outFields=ParkName&f=geojson`)).json();
+    map.getSource('park').setData(park);
+  }catch(e){console.warn('park load failed',e)}
+  try{
+    const g=encodeURIComponent(JSON.stringify({xmin:-77.4225,ymin:37.5185,xmax:-77.4010,ymax:37.5325,spatialReference:{wkid:4326}}));
+    const p=await(await fetch(`${B}/Parcels/FeatureServer/0/query?where=1%3D1&geometry=${g}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=PIN,OwnerName&resultRecordCount=2000&f=geojson`)).json();
+    map.getSource('parcels').setData(p);
+  }catch(e){console.warn('parcel load failed',e)}
+}
+
+// ---------- drawing ----------
+map.on('click',e=>{
+  if(editingOvl)return;
+  if(!mode){trySelect(e);return}
+  const k=KINDS[mode];
+  if(k.geom==='point'){
+    addFeature({type:'Feature',id:uid(),geometry:{type:'Point',coordinates:[e.lngLat.lng,e.lngLat.lat]},
+      properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
+  }else{
+    drawPts.push([e.lngLat.lng,e.lngLat.lat]);updateDraft();
+  }
+});
+map.on('dblclick',e=>{if(mode&&KINDS[mode].geom!=='point'){e.preventDefault();finishDraw()}});
+function updateDraft(){
+  const s=map.getSource('draft');if(!s)return;
+  const f=[];
+  if(drawPts.length)f.push({type:'Feature',geometry:{type:'MultiPoint',coordinates:drawPts},properties:{}});
+  if(drawPts.length>1)f.push({type:'Feature',geometry:{type:'LineString',coordinates:drawPts},properties:{}});
+  s.setData({type:'FeatureCollection',features:f});
+}
+function finishDraw(){
+  const k=KINDS[mode];
+  // drop duplicate trailing vertices left by the double-click's own click events
+  while(drawPts.length>1){
+    const a=drawPts[drawPts.length-1],b=drawPts[drawPts.length-2];
+    if(Math.abs(a[0]-b[0])<1e-7&&Math.abs(a[1]-b[1])<1e-7)drawPts.pop();else break;
+  }
+  if(k.geom==='polygon'&&drawPts.length>=3){
+    addFeature({type:'Feature',id:uid(),geometry:{type:'Polygon',coordinates:[[...drawPts,drawPts[0]]]},
+      properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
+  }else if(k.geom==='line'&&drawPts.length>=2){
+    addFeature({type:'Feature',id:uid(),geometry:{type:'LineString',coordinates:drawPts},
+      properties:{kind:mode,name:'',notes:'',task:false,done:false,color:k.color,created:new Date().toISOString()}});
+  }
+  drawPts=[];updateDraft();
+}
+function addFeature(f){
+  const n=data.features.filter(x=>x.properties.kind===f.properties.kind).length+1;
+  f.properties.name=`${KINDS[f.properties.kind].label} ${n}`;
+  data.features.push(f);save();refresh();openEditor(f.id);
+}
+
+// ---------- selection / editor ----------
+function trySelect(e){
+  const hits=map.queryRenderedFeatures(e.point,{layers:['site-pt','site-poly','site-line']});
+  if(hits.length)openEditor(hits[0].id??hits[0].properties.id??findByGeom(hits[0]));
+  else closeEditor();
+}
+function findByGeom(h){const f=data.features.find(x=>x.properties.name===h.properties.name);return f?.id}
+const ed=document.getElementById('editor');
+const kindSel=document.getElementById('edKind');
+for(const [k,v] of Object.entries(KINDS)){const o=document.createElement('option');o.value=k;o.textContent=v.label;kindSel.appendChild(o)}
+function openEditor(id){
+  const f=data.features.find(x=>x.id===id);if(!f)return;
+  selId=id;ed.style.display='block';
+  document.getElementById('edName').value=f.properties.name||'';
+  kindSel.value=f.properties.kind;
+  document.getElementById('edNotes').value=f.properties.notes||'';
+  document.getElementById('edTask').checked=!!f.properties.task;
+  document.getElementById('edDone').checked=!!f.properties.done;
+  document.getElementById('edDoneRow').style.display=f.properties.task?'flex':'none';
+  refreshList();
+}
+function closeEditor(){ed.style.display='none';selId=null;refreshList()}
+function bindEd(id,prop,attr){document.getElementById(id).addEventListener('input',e=>{
+  const f=data.features.find(x=>x.id===selId);if(!f)return;
+  f.properties[prop]=attr?e.target[attr]:e.target.value;
+  if(prop==='kind')f.properties.color=KINDS[f.properties.kind].color;
+  if(prop==='task')document.getElementById('edDoneRow').style.display=e.target.checked?'flex':'none';
+  save();refresh();
+})}
+bindEd('edName','name');bindEd('edKind','kind');bindEd('edNotes','notes');
+bindEd('edTask','task','checked');bindEd('edDone','done','checked');
+document.getElementById('edClose').onclick=closeEditor;
+document.getElementById('edDelete').onclick=()=>{
+  data.features=data.features.filter(x=>x.id!==selId);save();refresh();closeEditor();
+};
+
+// ---------- list ----------
+function refresh(){
+  const s=map.getSource('site');if(s)s.setData(data);
+  refreshList();
+  const open=data.features.filter(f=>f.properties.task&&!f.properties.done).length;
+  const tc=document.getElementById('taskCount');
+  tc.style.display=open?'inline':'none';tc.textContent=open+' open';
+}
+function refreshList(){
+  const el=document.getElementById('featList');el.innerHTML='';
+  for(const f of [...data.features].reverse()){
+    const d=document.createElement('div');d.className='feat'+(f.id===selId?' sel':'');
+    d.innerHTML=`<span class="dot" style="background:${f.properties.color}"></span>
+      <span class="nm">${esc(f.properties.name||'(unnamed)')}</span>
+      ${f.properties.task&&!f.properties.done?'<span class="flag">task</span>':''}`;
+    d.onclick=()=>{flyTo(f);openEditor(f.id)};
+    el.appendChild(d);
+  }
+}
+function esc(s){return s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
+function flyTo(f){
+  const g=f.geometry;
+  let c=g.type==='Point'?g.coordinates:(g.type==='Polygon'?g.coordinates[0][0]:g.coordinates[0]);
+  map.flyTo({center:c,zoom:Math.max(map.getZoom(),19)});
+}
+
+// ---------- layer toggles ----------
+function tgl(id,layers){document.getElementById(id).addEventListener('change',e=>{
+  layers.forEach(l=>map.setLayoutProperty(l,'visibility',e.target.checked?'visible':'none'))})}
+tgl('lyrParcels',['parcel-line']);tgl('lyrPark',['park-line']);tgl('lyrLabels',['site-label']);
+
+// ---------- imagery overlays ----------
+document.getElementById('btnUpload').onclick=()=>document.getElementById('fileInput').click();
+document.getElementById('fileInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const img=new Image();
+  img.onload=()=>{
+    const cv=document.createElement('canvas');
+    const scale=Math.min(1,1600/Math.max(img.width,img.height));
+    cv.width=img.width*scale;cv.height=img.height*scale;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    const url=cv.toDataURL('image/jpeg',.82);
+    const c=map.getCenter();
+    const o={id:uid(),name:file.name.replace(/\.[^.]+$/,''),url,
+      center:[c.lng,c.lat],widthM:120,aspect:cv.height/cv.width,rot:0,opacity:.8};
+    overlays.push(o);save();addOverlayToMap(o);renderOvlList();
+  };
+  img.src=URL.createObjectURL(file);
+  e.target.value='';
+});
+function ovlCorners(o){
+  const mPerDegLat=111320, mPerDegLng=111320*Math.cos(o.center[1]*Math.PI/180);
+  const w=o.widthM/2, h=o.widthM*o.aspect/2, r=-o.rot*Math.PI/180;
+  return [[-w,h],[w,h],[w,-h],[-w,-h]].map(([x,y])=>{
+    const rx=x*Math.cos(r)-y*Math.sin(r), ry=x*Math.sin(r)+y*Math.cos(r);
+    return [o.center[0]+rx/mPerDegLng, o.center[1]+ry/mPerDegLat];
+  });
+}
+function addOverlayToMap(o){
+  map.addSource('ovl-'+o.id,{type:'image',url:o.url,coordinates:ovlCorners(o)});
+  const before=map.getLayer('park-line')?'park-line':undefined;
+  map.addLayer({id:'ovl-'+o.id,type:'raster',source:'ovl-'+o.id,paint:{'raster-opacity':o.opacity,'raster-fade-duration':0}},before);
+}
+function updateOverlay(o){
+  map.getSource('ovl-'+o.id).setCoordinates(ovlCorners(o));
+  map.setPaintProperty('ovl-'+o.id,'raster-opacity',o.opacity);
+}
+function renderOvlList(){
+  const el=document.getElementById('ovlList');el.innerHTML='';
+  for(const o of overlays){
+    const d=document.createElement('div');d.className='ovl';
+    d.innerHTML=`<div class="nm">${esc(o.name)}
+        <span>
+          <button class="small" data-a="move">${editingOvl===o.id?'placing…':'place'}</button>
+          <button class="small danger" data-a="del">✕</button>
+        </span></div>
+      <div class="ctl">fade<input type="range" min="0" max="1" step=".05" value="${o.opacity}" data-a="op"></div>
+      <div class="ctl">size<input type="range" min="10" max="600" step="2" value="${o.widthM}" data-a="w"></div>
+      <div class="ctl">rotate<input type="range" min="-180" max="180" step="1" value="${o.rot}" data-a="r"></div>`;
+    d.querySelector('[data-a=move]').onclick=()=>{
+      editingOvl=editingOvl===o.id?null:o.id;
+      hint(editingOvl?'Drag on the map to move the overlay. Click "placing…" again to finish.':'');
+      renderOvlList();
+    };
+    d.querySelector('[data-a=del]').onclick=()=>{
+      map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id);
+      overlays=overlays.filter(x=>x.id!==o.id);save();renderOvlList();
+    };
+    d.querySelector('[data-a=op]').oninput=e=>{o.opacity=+e.target.value;save();updateOverlay(o)};
+    d.querySelector('[data-a=w]').oninput=e=>{o.widthM=+e.target.value;save();updateOverlay(o)};
+    d.querySelector('[data-a=r]').oninput=e=>{o.rot=+e.target.value;save();updateOverlay(o)};
+    el.appendChild(d);
+  }
+}
+renderOvlList();
+let dragging=false;
+map.on('mousedown',e=>{if(editingOvl){dragging=true;map.dragPan.disable();e.preventDefault()}});
+map.on('mousemove',e=>{
+  if(dragging&&editingOvl){
+    const o=overlays.find(x=>x.id===editingOvl);
+    o.center=[e.lngLat.lng,e.lngLat.lat];updateOverlay(o);
+  }});
+map.on('mouseup',()=>{if(dragging){dragging=false;map.dragPan.enable();save()}});
+
+// ---------- import / export ----------
+document.getElementById('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify({...data,overlays},null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='chimborazo-native-food-sitemap.geojson';a.click();
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('importInput').click();
+document.getElementById('importInput').addEventListener('change',e=>{
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    if(d.features){data.features=d.features;}
+    if(d.overlays){
+      overlays.forEach(o=>{if(map.getLayer('ovl-'+o.id)){map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id)}});
+      overlays=d.overlays;overlays.forEach(addOverlayToMap);renderOvlList();
+    }
+    save();refresh();
+  }catch(err){alert('Could not read that file.')}};
+  r.readAsText(e.target.files[0]);e.target.value='';
+});
+document.getElementById('btnClear').onclick=()=>{
+  if(!confirm('Delete all features and overlays from this browser?'))return;
+  overlays.forEach(o=>{if(map.getLayer('ovl-'+o.id)){map.removeLayer('ovl-'+o.id);map.removeSource('ovl-'+o.id)}});
+  data={type:'FeatureCollection',features:[]};overlays=[];save();refresh();renderOvlList();
+};
+</script>
+</body>
+</html>
