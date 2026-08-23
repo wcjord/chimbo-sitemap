@@ -151,7 +151,7 @@ const SB_URL='https://qythjcoxbwwmdmevvpdx.supabase.co';
 const SB_KEY='sb_publishable_Ic_6BjCADfZN8wVlrMCTgA_WhbMFh3j';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 
-const PARK_CENTER=[-77.41142,37.52551];
+const PARK_CENTER=[-77.41135,37.52374]; // Chimborazo Native Garden — fenced plot above the tracks
 const KINDS={
   tree:  {label:'Tree',  geom:'point', color:'#7cb46b', icon:'M12 21v-6M12 15c-4 0-6-2.5-6-5.5C6 6 9 3 12 3s6 3 6 6.5c0 3-2 5.5-6 5.5z'},
   plant: {label:'Plant', geom:'point', color:'#a4c96a', icon:'M12 21v-8M12 13C9 13 7 10 7 7c3 0 5 2 5 6 0-4 2-6 5-6 0 3-2 6-5 6z'},
@@ -248,7 +248,7 @@ async function maybeMigrateLocal(){
 
 // ---------- map ----------
 const map=new maplibregl.Map({
-  container:'map',center:PARK_CENTER,zoom:17.2,maxZoom:23,attributionControl:false,
+  container:'map',center:PARK_CENTER,zoom:18.4,maxZoom:23,attributionControl:false,
   style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',sources:{
     esri:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19}
   },layers:[{id:'base',type:'raster',source:'esri'}]}
