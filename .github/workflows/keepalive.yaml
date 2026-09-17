@@ -1,16 +1,18 @@
 name: Supabase keep-alive
 on:
   schedule:
-    - cron: "17 9 * * 1,4"   # Mon & Thu 09:17 UTC
+    - cron: "17 9 * * *"   # daily 09:17 UTC
   workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping database so the free-tier project stays active
+      - name: Read + function call so the free-tier project registers activity
         run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://qythjcoxbwwmdmevvpdx.supabase.co/rest/v1/features?select=id&limit=1" \
-            -H "apikey: sb_publishable_Ic_6BjCADfZN8wVlrMCTgA_WhbMFh3j")
-          echo "HTTP $code"
-          test "$code" = "200"
+          KEY="sb_publishable_Ic_6BjCADfZN8wVlrMCTgA_WhbMFh3j"
+          BASE="https://qythjcoxbwwmdmevvpdx.supabase.co"
+          r1=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/rest/v1/features?select=id&limit=1" -H "apikey: $KEY")
+          r2=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/rest/v1/rpc/is_steward" \
+            -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
+          echo "select: $r1, rpc: $r2"
+          test "$r1" = "200" && test "$r2" = "200"
