@@ -1,0 +1,1701 @@
+[
+    {
+        "id": "05457p2d",
+        "geojson": {
+            "id": "05457p2d",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41165414992686,
+                    37.52349270396711
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:32.795Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:27.99+00:00"
+    },
+    {
+        "id": "0ki42zmv",
+        "geojson": {
+            "id": "0ki42zmv",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41134681020294,
+                    37.52355165036548
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:30:01.258Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:30:05.03+00:00"
+    },
+    {
+        "id": "1ji8rkr7",
+        "geojson": {
+            "id": "1ji8rkr7",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4114829508089,
+                    37.523731140303966
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:25.316Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:40:44.293+00:00"
+    },
+    {
+        "id": "1mzzuq99",
+        "geojson": {
+            "id": "1mzzuq99",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41182440764143,
+                    37.52359299766057
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:50.529Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:27.017+00:00"
+    },
+    {
+        "id": "23c8rg2g",
+        "geojson": {
+            "id": "23c8rg2g",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41164655707787,
+                    37.52365843198761
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:11.895Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:26.942+00:00"
+    },
+    {
+        "id": "24rybedl",
+        "geojson": {
+            "id": "24rybedl",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41157744753299,
+                    37.52369087109108
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:19.337Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:19.647+00:00"
+    },
+    {
+        "id": "2q5k48b6",
+        "geojson": {
+            "id": "2q5k48b6",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41184492563745,
+                    37.52349078326769
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:02.238Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:35:32.522+00:00"
+    },
+    {
+        "id": "3q5wq6px",
+        "geojson": {
+            "id": "3q5wq6px",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41139154693741,
+                    37.523546322072974
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:29:46.066Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:29:50.542+00:00"
+    },
+    {
+        "id": "4w4nscz0",
+        "geojson": {
+            "id": "4w4nscz0",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41169112494809,
+                    37.523672417580315
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:05.000Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:04.31+00:00"
+    },
+    {
+        "id": "5l6yw5j4",
+        "geojson": {
+            "id": "5l6yw5j4",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41149049249545,
+                    37.523494184544646
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:42.020Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:11.613+00:00"
+    },
+    {
+        "id": "60ff55xn",
+        "geojson": {
+            "id": "60ff55xn",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41170737274024,
+                    37.52349192760718
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:18.390Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:18.982+00:00"
+    },
+    {
+        "id": "60x6m2g3",
+        "geojson": {
+            "id": "60x6m2g3",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41149242941718,
+                    37.52353909735541
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:29:11.115Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:29:18.618+00:00"
+    },
+    {
+        "id": "61cjr7ot",
+        "geojson": {
+            "id": "61cjr7ot",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41152032637905,
+                    37.52373897042668
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:24.117Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:14.846+00:00"
+    },
+    {
+        "id": "7b667pme",
+        "geojson": {
+            "id": "7b667pme",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41181751124894,
+                    37.52349078326769
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:10.164Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:35:58.066+00:00"
+    },
+    {
+        "id": "8eknxdgt",
+        "geojson": {
+            "id": "8eknxdgt",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41162552543301,
+                    37.523493197492684
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:34.160Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:32.14+00:00"
+    },
+    {
+        "id": "8pf2h2er",
+        "geojson": {
+            "id": "8pf2h2er",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -77.41161294378155,
+                            37.52353937912248
+                        ],
+                        [
+                            -77.4116078553421,
+                            37.523515165174715
+                        ],
+                        [
+                            -77.41130981819424,
+                            37.52353880259946
+                        ],
+                        [
+                            -77.41132435659199,
+                            37.52357627654986
+                        ],
+                        [
+                            -77.41161803222042,
+                            37.52354860348103
+                        ],
+                        [
+                            -77.41161294378155,
+                            37.52353937912248
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "zone",
+                "name": "Chickasaw Plum Thicket",
+                "task": false,
+                "color": "#7f8fc9",
+                "notes": "",
+                "created": "2026-09-10T17:30:56.526Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:31:14.605+00:00"
+    },
+    {
+        "id": "97gjvjgj",
+        "geojson": {
+            "id": "97gjvjgj",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -77.41171876274277,
+                            37.523569648459215
+                        ],
+                        [
+                            -77.41166021201278,
+                            37.52357871813669
+                        ],
+                        [
+                            -77.41165243574441,
+                            37.52350253281345
+                        ],
+                        [
+                            -77.41172791129446,
+                            37.523502170025694
+                        ],
+                        [
+                            -77.41171876274277,
+                            37.523569648459215
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "zone",
+                "name": "Black raspberry/ Rubus occidentallis Trellising",
+                "task": false,
+                "color": "#7f8fc9",
+                "notes": "",
+                "created": "2026-09-10T17:49:57.469Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:50:10.734+00:00"
+    },
+    {
+        "id": "9mqu3ksr",
+        "geojson": {
+            "id": "9mqu3ksr",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41137494901167,
+                    37.523606471529305
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ Prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:48:05.613Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:48:16.837+00:00"
+    },
+    {
+        "id": "b8gdspfc",
+        "geojson": {
+            "id": "b8gdspfc",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41177433848144,
+                    37.523644452829814
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:56.324Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:13.834+00:00"
+    },
+    {
+        "id": "bdh68wv6",
+        "geojson": {
+            "id": "bdh68wv6",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41192212464539,
+                    37.523551928345114
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:12.501Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:38:29.44+00:00"
+    },
+    {
+        "id": "bpzzgr5y",
+        "geojson": {
+            "id": "bpzzgr5y",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41179009686044,
+                    37.523491164713974
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:12.545Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:02.98+00:00"
+    },
+    {
+        "id": "cc55qqax",
+        "geojson": {
+            "id": "cc55qqax",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41180395685747,
+                    37.52363270763145
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:52.660Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:23.061+00:00"
+    },
+    {
+        "id": "cocial67",
+        "geojson": {
+            "id": "cocial67",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41132745733623,
+                    37.52349665217402
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:54.528Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:37.1+00:00"
+    },
+    {
+        "id": "cynau772",
+        "geojson": {
+            "id": "cynau772",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41152808357255,
+                    37.52370205698597
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:22.286Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:42.644+00:00"
+    },
+    {
+        "id": "d0cpm7cy",
+        "geojson": {
+            "id": "d0cpm7cy",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4117496565012,
+                    37.523618165954645
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:57.923Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:10.087+00:00"
+    },
+    {
+        "id": "d1b61gv4",
+        "geojson": {
+            "id": "d1b61gv4",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41154214103877,
+                    37.523494184544646
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:39.323Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:48.99+00:00"
+    },
+    {
+        "id": "d521ouaa",
+        "geojson": {
+            "id": "d521ouaa",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41185332081848,
+                    37.52358069315888
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:46.649Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:40:12.32+00:00"
+    },
+    {
+        "id": "dinfgbpb",
+        "geojson": {
+            "id": "dinfgbpb",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4114284366535,
+                    37.523600353089506
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ Prunus angustifolia",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:48:18.739Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:48:30.29+00:00"
+    },
+    {
+        "id": "dwcarhq4",
+        "geojson": {
+            "id": "dwcarhq4",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41159814548257,
+                    37.52349369101904
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:35.892Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:41.18+00:00"
+    },
+    {
+        "id": "dxct5gd7",
+        "geojson": {
+            "id": "dxct5gd7",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41161411790411,
+                    37.52369646403875
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:14.592Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:40:59.719+00:00"
+    },
+    {
+        "id": "f6q0g3ja",
+        "geojson": {
+            "id": "f6q0g3ja",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41176268247192,
+                    37.52349154616029
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:14.411Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:08.058+00:00"
+    },
+    {
+        "id": "fbb3lpud",
+        "geojson": {
+            "id": "fbb3lpud",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -77.41164515769638,
+                            37.523705882504586
+                        ],
+                        [
+                            -77.41167969054672,
+                            37.52377343966813
+                        ],
+                        [
+                            -77.41148515549106,
+                            37.523834606236676
+                        ],
+                        [
+                            -77.41143796059615,
+                            37.52377800433925
+                        ],
+                        [
+                            -77.41164515769638,
+                            37.523705882504586
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "zone",
+                "name": "Native Shrub Hillside Plantings",
+                "task": false,
+                "color": "#7f8fc9",
+                "notes": "",
+                "created": "2026-09-10T17:47:21.117Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:47:34.816+00:00"
+    },
+    {
+        "id": "fwko9isq",
+        "geojson": {
+            "id": "fwko9isq",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41143147124977,
+                    37.523749037725466
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:28.514Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:09.972+00:00"
+    },
+    {
+        "id": "g41hgziq",
+        "geojson": {
+            "id": "g41hgziq",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41152409724404,
+                    37.52358933989636
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:48:49.010Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:49:09.719+00:00"
+    },
+    {
+        "id": "gigneqa0",
+        "geojson": {
+            "id": "gigneqa0",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41171721732691,
+                    37.523634385516914
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:59.555Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:04.343+00:00"
+    },
+    {
+        "id": "gpkahm8a",
+        "geojson": {
+            "id": "gpkahm8a",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41157201007555,
+                    37.523494184544646
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:37.175Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:07.541+00:00"
+    },
+    {
+        "id": "gyjwreh2",
+        "geojson": {
+            "id": "gyjwreh2",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4116784313582,
+                    37.523645571420246
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:03.568Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:30.87+00:00"
+    },
+    {
+        "id": "ieyiuu07",
+        "geojson": {
+            "id": "ieyiuu07",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41168028533437,
+                    37.52349122338953
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:30.780Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:23.063+00:00"
+    },
+    {
+        "id": "it2nw29a",
+        "geojson": {
+            "id": "it2nw29a",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41140773037293,
+                    37.52349615864847
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:47.750Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:22.812+00:00"
+    },
+    {
+        "id": "kcn8jveu",
+        "geojson": {
+            "id": "kcn8jveu",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41156898513992,
+                    37.52371827652995
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:20.753Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:40:54.201+00:00"
+    },
+    {
+        "id": "kf1eo8ha",
+        "geojson": {
+            "id": "kf1eo8ha",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41183780643091,
+                    37.523619284544594
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:44.850Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:40:05.926+00:00"
+    },
+    {
+        "id": "kqydizkl",
+        "geojson": {
+            "id": "kqydizkl",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41165784026919,
+                    37.523679125900046
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:10.428Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:55.298+00:00"
+    },
+    {
+        "id": "l17sjbui",
+        "geojson": {
+            "id": "l17sjbui",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41189281198675,
+                    37.52359467554696
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:48.330Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:38.581+00:00"
+    },
+    {
+        "id": "l5r778k2",
+        "geojson": {
+            "id": "l5r778k2",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41147266681878,
+                    37.523593826753356
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw plum/ Prunus angustifolia",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:48:32.887Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:48:45.473+00:00"
+    },
+    {
+        "id": "nax9jzga",
+        "geojson": {
+            "id": "nax9jzga",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41151476108831,
+                    37.523494184544646
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:40.754Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:53.957+00:00"
+    },
+    {
+        "id": "o0m74pvk",
+        "geojson": {
+            "id": "o0m74pvk",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41146435708845,
+                    37.52349517159655
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:43.487Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:30.391+00:00"
+    },
+    {
+        "id": "onw1x6vz",
+        "geojson": {
+            "id": "onw1x6vz",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41161129710643,
+                    37.52367073647734
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:17.972Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:50.721+00:00"
+    },
+    {
+        "id": "p9i6p6et",
+        "geojson": {
+            "id": "p9i6p6et",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4113766167927,
+                    37.52349615864847
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:49.613Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:47.141+00:00"
+    },
+    {
+        "id": "rawi90gf",
+        "geojson": {
+            "id": "rawi90gf",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4117333442663,
+                    37.52349078326769
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:16.095Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:13.004+00:00"
+    },
+    {
+        "id": "sbpx90bn",
+        "geojson": {
+            "id": "sbpx90bn",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41153859129163,
+                    37.52353538318256
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:28:51.715Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:29:04.781+00:00"
+    },
+    {
+        "id": "soj8c4fz",
+        "geojson": {
+            "id": "soj8c4fz",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41146602602221,
+                    37.52375910502285
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:26.964Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:41:37.949+00:00"
+    },
+    {
+        "id": "t4ss84fk",
+        "geojson": {
+            "id": "t4ss84fk",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41173696291132,
+                    37.52365787591127
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:39:01.653Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:00.703+00:00"
+    },
+    {
+        "id": "u05x9bot",
+        "geojson": {
+            "id": "u05x9bot",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41188434959368,
+                    37.52357510020255
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:38.501Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:39:56.967+00:00"
+    },
+    {
+        "id": "ufn8bhpt",
+        "geojson": {
+            "id": "ufn8bhpt",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -77.41114009364509,
+                            37.52366884223588
+                        ],
+                        [
+                            -77.41110181931252,
+                            37.52368840462883
+                        ],
+                        [
+                            -77.4110133630772,
+                            37.523594640007616
+                        ],
+                        [
+                            -77.41096233063423,
+                            37.52355753886634
+                        ],
+                        [
+                            -77.41092745846449,
+                            37.52354067470469
+                        ],
+                        [
+                            -77.410935113331,
+                            37.52350829550427
+                        ],
+                        [
+                            -77.41095722738967,
+                            37.523490756764886
+                        ],
+                        [
+                            -77.41098699631485,
+                            37.52349278046613
+                        ],
+                        [
+                            -77.41105418903238,
+                            37.52355146776871
+                        ],
+                        [
+                            -77.41114009364509,
+                            37.52366884223588
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "zone",
+                "name": "American Elderberry/ Sambucus canadensis Thicket",
+                "task": false,
+                "color": "#7f8fc9",
+                "notes": "",
+                "created": "2026-09-10T17:44:59.321Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:45:14.4+00:00"
+    },
+    {
+        "id": "vagyrmhg",
+        "geojson": {
+            "id": "vagyrmhg",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -77.41185775615946,
+                            37.52348497471962
+                        ],
+                        [
+                            -77.4112346255821,
+                            37.523491716973155
+                        ],
+                        [
+                            -77.41124227657149,
+                            37.5235065499285
+                        ],
+                        [
+                            -77.4118620067092,
+                            37.523499133451466
+                        ],
+                        [
+                            -77.41185775615946,
+                            37.52348497471962
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "zone",
+                "name": "Muscadine Grapevine Trellis",
+                "task": false,
+                "color": "#7f8fc9",
+                "notes": "",
+                "created": "2026-09-10T17:27:34.215Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:27:49.41+00:00"
+    },
+    {
+        "id": "vgxhzpx8",
+        "geojson": {
+            "id": "vgxhzpx8",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41122476604535,
+                    37.523749007625284
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "sign",
+                "name": "Entrance Sign",
+                "task": false,
+                "color": "#d9a441",
+                "notes": "",
+                "created": "2026-09-10T17:23:14.981Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:23:26.148+00:00"
+    },
+    {
+        "id": "vhb5s1mq",
+        "geojson": {
+            "id": "vhb5s1mq",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41157038462667,
+                    37.52358485303978
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ Prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:49:17.033Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:49:25.057+00:00"
+    },
+    {
+        "id": "w9nfchtd",
+        "geojson": {
+            "id": "w9nfchtd",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41178632687173,
+                    37.52360306497907
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Serviceberry/ Amelanchier spp.",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:38:54.093Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:42:17.465+00:00"
+    },
+    {
+        "id": "wdh7hwrm",
+        "geojson": {
+            "id": "wdh7hwrm",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41079941039452,
+                    37.52388839059118
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "water",
+                "name": "Dog Park Water",
+                "task": false,
+                "color": "#6aa8c9",
+                "notes": "",
+                "created": "2026-08-23T20:19:51.380Z"
+            }
+        },
+        "created_by": "8f8b3e18-e020-4f60-a479-f7d25ad7a238",
+        "updated_at": "2026-08-23T20:19:59.533+00:00"
+    },
+    {
+        "id": "wi1rs1g6",
+        "geojson": {
+            "id": "wi1rs1g6",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.4114375782362,
+                    37.52354510515413
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ prunus angustifolia ",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:29:38.658Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:29:43.798+00:00"
+    },
+    {
+        "id": "x6g1zvzf",
+        "geojson": {
+            "id": "x6g1zvzf",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41135172592863,
+                    37.52349665217402
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:51.264Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:37:03.196+00:00"
+    },
+    {
+        "id": "xnbrjjt3",
+        "geojson": {
+            "id": "xnbrjjt3",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41143759940971,
+                    37.52349615864847
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "plant",
+                "name": "Muscadine Grapevine/ Vitis rotundifolia",
+                "task": false,
+                "color": "#a4c96a",
+                "notes": "",
+                "created": "2026-09-10T17:34:45.335Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:36:59.021+00:00"
+    },
+    {
+        "id": "y1zr74qp",
+        "geojson": {
+            "id": "y1zr74qp",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -77.41158609119164,
+                    37.52352954662538
+                ]
+            },
+            "properties": {
+                "done": false,
+                "kind": "tree",
+                "name": "Chickasaw Plum/ Prunus angustifolia",
+                "task": false,
+                "color": "#7cb46b",
+                "notes": "",
+                "created": "2026-09-10T17:28:31.881Z"
+            }
+        },
+        "created_by": "df6068fa-1178-48fa-9a4b-854545287b03",
+        "updated_at": "2026-09-10T17:28:44.797+00:00"
+    }
+]
