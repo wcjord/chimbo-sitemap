@@ -1,18 +1,34 @@
-name: Supabase keep-alive
+name: Daily backup + keep-alive
 on:
   schedule:
     - cron: "17 9 * * *"   # daily 09:17 UTC
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
-  ping:
+  backup:
     runs-on: ubuntu-latest
     steps:
-      - name: Read + function call so the free-tier project registers activity
+      - uses: actions/checkout@v4
+      - name: Snapshot shared map data into the repo
         run: |
           KEY="sb_publishable_Ic_6BjCADfZN8wVlrMCTgA_WhbMFh3j"
           BASE="https://qythjcoxbwwmdmevvpdx.supabase.co"
-          r1=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/rest/v1/features?select=id&limit=1" -H "apikey: $KEY")
-          r2=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/rest/v1/rpc/is_steward" \
-            -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
-          echo "select: $r1, rpc: $r2"
-          test "$r1" = "200" && test "$r2" = "200"
+          mkdir -p backup
+          code=$(curl -s -o backup/features.json -w "%{http_code}" "$BASE/rest/v1/features?select=*&order=id" -H "apikey: $KEY")
+          code2=$(curl -s -o backup/overlays.json -w "%{http_code}" "$BASE/rest/v1/overlays?select=*&order=id" -H "apikey: $KEY")
+          echo "features: $code, overlays: $code2"
+          if [ "$code" != "200" ] || [ "$code2" != "200" ]; then
+            echo "::warning::Database unreachable (paused?) — features $code, overlays $code2. Restore at https://supabase.com/dashboard/project/qythjcoxbwwmdmevvpdx"
+            exit 1
+          fi
+          python3 -m json.tool backup/features.json > backup/features.pretty.json && mv backup/features.pretty.json backup/features.json
+          python3 -m json.tool backup/overlays.json > backup/overlays.pretty.json && mv backup/overlays.pretty.json backup/overlays.json
+      - name: Commit snapshot if changed
+        run: |
+          git config user.name "backup-bot"
+          git config user.email "actions@github.com"
+          git add backup/
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Daily backup of shared map data"
+          git push
