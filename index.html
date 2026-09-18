@@ -56,6 +56,12 @@
   #editor textarea{resize:vertical;min-height:52px}
   .maplibregl-canvas{cursor:crosshair}
   body.mode-none .maplibregl-canvas{cursor:grab}
+  .preset{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid transparent}
+  .preset:hover{background:var(--panel2)}
+  .preset.arm{border-color:var(--accent);background:#33402d}
+  .preset .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .preset .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .preset .ct{font-size:10px;color:var(--dim)}
   .taskbadge{font-size:10px;background:var(--task);color:#fff;border-radius:4px;padding:1px 5px}
   .pill{font-size:10px;border-radius:4px;padding:1px 6px;background:#33402d;color:var(--accent)}
   .pill.ro{background:#3c372f;color:var(--dim)}
@@ -100,6 +106,12 @@
     </div>
   </section>
 
+  <section id="presetSection" style="display:none">
+    <h2>Place another</h2>
+    <div id="presetList"></div>
+    <div class="hint" id="presetTip">Click one to place more of the same, with its name and notes copied.</div>
+  </section>
+
   <section>
     <h2>Layers</h2>
     <div class="row"><input type="checkbox" id="lyrParcels" checked><label for="lyrParcels">Parcel lines (city GIS)</label></div>
@@ -136,7 +148,8 @@
   <textarea id="edNotes" placeholder="Notes / observations"></textarea>
   <div class="row"><input type="checkbox" id="edTask"><label for="edTask" style="font-size:12px">Needs work (task)</label></div>
   <div class="row" id="edDoneRow" style="display:none"><input type="checkbox" id="edDone"><label for="edDone" style="font-size:12px">Done</label></div>
-  <div style="display:flex;gap:6px;margin-top:4px">
+  <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+    <button class="small" id="edClone" style="border-color:var(--accent);color:var(--accent)">+ Place another</button>
     <button class="small" id="edClose">Close</button>
     <button class="small danger" id="edDelete">Delete</button>
   </div>
@@ -162,7 +175,7 @@ const KINDS={
   zone:  {label:'Zone',  geom:'polygon',color:'#7f8fc9', icon:'M5 5l6-2 8 4-2 12-9 2-5-6z'},
   path:  {label:'Path',  geom:'line',  color:'#c9c3b4', icon:'M4 20c4-1 3-6 7-7s3-6 9-8'}
 };
-let mode=null, drawPts=[], selId=null, editingOvl=null, canEdit=false;
+let mode=null, drawPts=[], selId=null, editingOvl=null, canEdit=false, stampTpl=null, stampCount=0;
 let data={type:'FeatureCollection',features:[]};
 let overlays=[];
 function uid(){return Math.random().toString(36).slice(2,10)}
@@ -171,13 +184,22 @@ function sync(ok,label){const d=document.getElementById('syncDot');d.classList.t
   document.getElementById('syncLabel').textContent=label}
 
 // ---------- supabase data ----------
-async function fetchAll(){
+let fetchRetry=null;
+async function fetchAll(tries=0){
   const [f,o]=await Promise.all([
     sb.from('features').select('geojson'),
     sb.from('overlays').select('*').order('created_at')
   ]);
-  if(f.error||o.error){sync(false,'offline — showing last loaded');console.warn(f.error||o.error);return}
-  data={type:'FeatureCollection',features:f.data.map(r=>r.geojson)};
+  if(f.error||o.error){
+    // a waking database answers the first call with an error; keep retrying so the map never sits empty and silent
+    console.warn(f.error||o.error);
+    sync(false,data.features.length?'reconnecting…':'connecting to the shared map…');
+    clearTimeout(fetchRetry);
+    if(tries<6)fetchRetry=setTimeout(()=>fetchAll(tries+1),2000*(tries+1));
+    else sync(false,'cannot reach the shared map — it may be paused');
+    return;
+  }
+  data={type:'FeatureCollection',features:f.data.map(r=>{const g=r.geojson;g.properties=g.properties||{};g.properties.id=g.id;return g})};
   const prev=new Set(overlays.map(x=>x.id));
   overlays=o.data.map(r=>({id:r.id,name:r.name,url:r.image_url,center:r.center,widthM:r.width_m,aspect:r.aspect,rot:r.rot,opacity:r.opacity}));
   if(map.loaded()){
@@ -217,6 +239,8 @@ async function refreshAuth(){
     if(canEdit)maybeMigrateLocal();
   }
   document.querySelectorAll('.tool').forEach(b=>b.disabled=!canEdit);
+  if(!canEdit){stampTpl=null;stampCount=0}
+  renderPresets();
   document.getElementById('btnUpload').disabled=!canEdit;
   if(!canEdit)hint('Viewing the shared map. Sign in as a steward to add or edit.');
   else hint('Pick a tool, then click the map. Click any feature to edit it.');
@@ -271,6 +295,7 @@ function canFinish(){
 }
 function setMode(k){
   if(canFinish())finishDraw();
+  if(k&&stampTpl){stampTpl=null;stampCount=0;renderPresets()}
   mode=k;drawPts=[];updateDraft();updateDrawUI();
   if(k&&KINDS[k].geom!=='point')map.doubleClickZoom.disable();else map.doubleClickZoom.enable();
   document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.kind===mode));
@@ -285,6 +310,7 @@ function updateDrawUI(){
 window.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(canFinish())finishDraw();
+    if(stampTpl){armStamp(null);return}
     setMode(null);closeEditor();
   }
   if(e.key==='Enter'&&canFinish())finishDraw();
@@ -311,6 +337,14 @@ map.on('load',async()=>{
     paint:{'circle-radius':11,'circle-color':'rgba(0,0,0,0)','circle-stroke-color':'#e2793e','circle-stroke-width':3}});
   map.addLayer({id:'site-pt',type:'circle',source:'site',filter:['==',['geometry-type'],'Point'],
     paint:{'circle-radius':6,'circle-color':['coalesce',['get','color'],'#ccc'],'circle-stroke-color':'#1c1a17','circle-stroke-width':1.5}});
+  map.addLayer({id:'sel-poly-fill',type:'fill',source:'site',filter:selFilter('Polygon'),
+    paint:{'fill-color':'#ffffff','fill-opacity':.18}});
+  map.addLayer({id:'sel-poly',type:'line',source:'site',filter:selFilter('Polygon'),
+    paint:{'line-color':'#ffffff','line-width':3,'line-opacity':.95}});
+  map.addLayer({id:'sel-line',type:'line',source:'site',filter:selFilter('LineString'),
+    paint:{'line-color':'#ffffff','line-width':5,'line-opacity':.9}});
+  map.addLayer({id:'sel-pt',type:'circle',source:'site',filter:selFilter('Point'),
+    paint:{'circle-radius':13,'circle-color':'rgba(255,255,255,.15)','circle-stroke-color':'#ffffff','circle-stroke-width':2.5}});
   map.addLayer({id:'site-label',type:'symbol',source:'site',
     layout:{'text-field':['get','name'],'text-size':11,'text-offset':[0,1.2],'text-anchor':'top','text-font':['Noto Sans Regular']},
     paint:{'text-color':'#fff','text-halo-color':'rgba(0,0,0,.75)','text-halo-width':1.4}});
@@ -341,6 +375,10 @@ async function loadCityData(){
 // ---------- drawing ----------
 map.on('click',e=>{
   if(editingOvl)return;
+  if(stampTpl){
+    if(!canEdit){hint('Sign in as a steward to edit.');return}
+    stampAt(e.lngLat);return;
+  }
   if(!mode){trySelect(e);return}
   if(!canEdit){hint('Sign in as a steward to edit.');return}
   const k=KINDS[mode];
@@ -381,6 +419,7 @@ function finishDraw(){
 function addFeature(f){
   const n=data.features.filter(x=>x.properties.kind===f.properties.kind).length+1;
   f.properties.name=`${KINDS[f.properties.kind].label} ${n}`;
+  f.properties.id=f.id;
   data.features.push(f);refresh();openEditor(f.id);
   dbUpsertFeature(f);
 }
@@ -389,8 +428,9 @@ function addFeature(f){
 function trySelect(e){
   const hits=map.queryRenderedFeatures(e.point,{layers:['site-pt','site-poly','site-line']});
   if(hits.length){
-    const f=data.features.find(x=>x.properties.name===hits[0].properties.name);
-    if(f)openEditor(f.id);
+    const hid=hits[0].properties.id;
+    const f=data.features.find(x=>x.id===hid);
+    if(f)openEditor(f.id);else closeEditor();
   }
   else closeEditor();
 }
@@ -399,7 +439,7 @@ const kindSel=document.getElementById('edKind');
 for(const [k,v] of Object.entries(KINDS)){const o=document.createElement('option');o.value=k;o.textContent=v.label;kindSel.appendChild(o)}
 function openEditor(id){
   const f=data.features.find(x=>x.id===id);if(!f)return;
-  selId=id;ed.style.display='block';
+  selId=id;ed.style.display='block';refreshHighlight();
   const dis=!canEdit;
   ['edName','edKind','edNotes','edTask','edDone'].forEach(i=>document.getElementById(i).disabled=dis);
   document.getElementById('edDelete').style.display=dis?'none':'inline-block';
@@ -411,7 +451,7 @@ function openEditor(id){
   document.getElementById('edDoneRow').style.display=f.properties.task?'flex':'none';
   refreshList();
 }
-function closeEditor(){ed.style.display='none';selId=null;refreshList()}
+function closeEditor(){ed.style.display='none';selId=null;refreshHighlight();refreshList()}
 function bindEd(id,prop,attr){document.getElementById(id).addEventListener('input',e=>{
   const f=data.features.find(x=>x.id===selId);if(!f)return;
   f.properties[prop]=attr?e.target[attr]:e.target.value;
@@ -421,6 +461,10 @@ function bindEd(id,prop,attr){document.getElementById(id).addEventListener('inpu
 })}
 bindEd('edName','name');bindEd('edKind','kind');bindEd('edNotes','notes');
 bindEd('edTask','task','checked');bindEd('edDone','done','checked');
+document.getElementById('edClone').onclick=()=>{
+  const f=data.features.find(x=>x.id===selId);if(!f)return;
+  closeEditor();armStamp(f);
+};
 document.getElementById('edClose').onclick=closeEditor;
 document.getElementById('edDelete').onclick=()=>{
   const id=selId;
@@ -431,7 +475,7 @@ document.getElementById('edDelete').onclick=()=>{
 // ---------- list ----------
 function refresh(){
   const s=map.getSource('site');if(s)s.setData(data);
-  refreshList();
+  refreshList();renderPresets();
   const open=data.features.filter(f=>f.properties.task&&!f.properties.done).length;
   const tc=document.getElementById('taskCount');
   tc.style.display=open?'inline':'none';tc.textContent=open+' open';
@@ -452,6 +496,90 @@ function flyTo(f){
   const g=f.geometry;
   let c=g.type==='Point'?g.coordinates:(g.type==='Polygon'?g.coordinates[0][0]:g.coordinates[0]);
   map.flyTo({center:c,zoom:Math.max(map.getZoom(),19)});
+}
+
+// ---------- selection highlight ----------
+function selFilter(geom){
+  return ['all',['==',['get','id'],selId||'\u0000'],['==',['geometry-type'],geom]];
+}
+function refreshHighlight(){
+  if(!map.getLayer('sel-pt'))return;
+  map.setFilter('sel-poly-fill',selFilter('Polygon'));
+  map.setFilter('sel-poly',selFilter('Polygon'));
+  map.setFilter('sel-line',selFilter('LineString'));
+  map.setFilter('sel-pt',selFilter('Point'));
+}
+
+// ---------- place another (replicate an existing plant) ----------
+function presetKey(f){
+  const p=f.properties;
+  // case- and whitespace-insensitive so naming drift does not split one plant into several presets
+  return [p.kind,(p.name||'').trim().toLowerCase().replace(/\s+/g,' ')].join('\u0001');
+}
+function presets(){
+  const m=new Map();
+  for(const f of data.features){
+    const nm=(f.properties.name||'').trim();
+    if(!nm)continue;
+    const k=presetKey(f);
+    let g=m.get(k);
+    if(!g){g={key:k,count:0,spell:new Map(),tpl:f};m.set(k,g)}
+    g.count++;
+    g.spell.set(nm,(g.spell.get(nm)||0)+1);
+  }
+  for(const g of m.values()){
+    // template is the most-used exact spelling, so copies converge rather than spread typos
+    const best=[...g.spell.entries()].sort((a,b)=>b[1]-a[1])[0][0];
+    g.tpl=data.features.find(f=>presetKey(f)===g.key&&(f.properties.name||'').trim()===best)||g.tpl;
+  }
+  return [...m.values()].sort((a,b)=>b.count-a.count||a.tpl.properties.name.localeCompare(b.tpl.properties.name));
+}
+function renderPresets(){
+  const sec=document.getElementById('presetSection'),el=document.getElementById('presetList');
+  const list=presets();
+  sec.style.display=(canEdit&&list.length)?'block':'none';
+  el.innerHTML='';
+  for(const p of list){
+    const d=document.createElement('div');
+    d.className='preset'+(stampTpl&&presetKey(stampTpl)===p.key?' arm':'');
+    d.innerHTML=`<span class="dot" style="background:${p.tpl.properties.color}"></span>
+      <span class="nm">${esc(p.tpl.properties.name)}</span><span class="ct">${p.count}</span>`;
+    d.onclick=()=>armStamp(stampTpl&&presetKey(stampTpl)===p.key?null:p.tpl);
+    el.appendChild(d);
+  }
+}
+function armStamp(tpl){
+  if(tpl)setMode(null);
+  stampTpl=tpl?JSON.parse(JSON.stringify(tpl)):null;
+  stampCount=0;
+  document.body.classList.toggle('mode-none',!stampTpl&&!mode);
+  renderPresets();
+  hint(stampTpl?`Click the map to place another “${stampTpl.properties.name}”. Esc to stop.`
+               :'Pick a tool, then click the map. Click any feature to edit it.');
+}
+function coordsCentroid(c,acc){
+  if(typeof c[0]==='number'){acc.x+=c[0];acc.y+=c[1];acc.n++;return}
+  for(const p of c)coordsCentroid(p,acc);
+}
+function shiftCoords(c,dx,dy){
+  if(typeof c[0]==='number')return [c[0]+dx,c[1]+dy];
+  return c.map(p=>shiftCoords(p,dx,dy));
+}
+function stampAt(lngLat){
+  const t=stampTpl;
+  const g=JSON.parse(JSON.stringify(t.geometry));
+  if(g.type==='Point')g.coordinates=[lngLat.lng,lngLat.lat];
+  else{
+    const acc={x:0,y:0,n:0};coordsCentroid(g.coordinates,acc);
+    g.coordinates=shiftCoords(g.coordinates,lngLat.lng-acc.x/acc.n,lngLat.lat-acc.y/acc.n);
+  }
+  const f={type:'Feature',id:uid(),geometry:g,properties:{
+    kind:t.properties.kind,name:t.properties.name,notes:t.properties.notes||'',
+    color:t.properties.color,task:false,done:false,created:new Date().toISOString()}};
+  f.properties.id=f.id;
+  data.features.push(f);refresh();dbUpsertFeature(f);
+  stampCount++;
+  hint(`Placed ${stampCount} × “${f.properties.name}”. Keep clicking, or Esc to stop.`);
 }
 
 // ---------- layer toggles ----------
