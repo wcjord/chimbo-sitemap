@@ -70,6 +70,16 @@
   .preset .dot{width:9px;height:9px;border-radius:50%;flex:none}
   .preset .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .preset .ct{font-size:10px;color:var(--dim)}
+  .imgs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
+  .imgs figure{margin:0;position:relative;width:62px}
+  .imgs img{width:62px;height:62px;object-fit:cover;border-radius:5px;border:1px solid var(--line);
+    cursor:zoom-in;background:#fff;display:block}
+  .imgs .rm{position:absolute;top:-6px;right:-6px;background:var(--panel);border:1px solid var(--line);
+    color:#e08b6d;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:14px;cursor:pointer;padding:0}
+  #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;
+    justify-content:center;flex-direction:column;gap:12px;z-index:60;padding:26px;cursor:zoom-out}
+  #lightbox img{max-width:88vw;max-height:78vh;object-fit:contain;background:#fff;border-radius:6px}
+  #lightbox .cap{font-size:11px;color:var(--dim);max-width:70ch;text-align:center;line-height:1.5}
   .taskbadge{font-size:10px;background:var(--task);color:#fff;border-radius:4px;padding:1px 5px}
   .pill{font-size:10px;border-radius:4px;padding:1px 6px;background:#33402d;color:var(--accent)}
   .pill.ro{background:#3c372f;color:var(--dim)}
@@ -149,11 +159,15 @@
   <footer>Basemap © Esri World Imagery · Parcels &amp; park boundary © City of Richmond GIS · Shared map — edits by signed-in stewards are visible to everyone.</footer>
 </div>
 <div id="map"></div>
+<div id="lightbox"><img id="lbImg" alt=""><div class="cap" id="lbCap"></div></div>
 
 <div id="editor">
   <input type="text" id="edName" placeholder="Name">
   <select id="edKind"></select>
   <textarea id="edNotes" placeholder="Notes / observations"></textarea>
+  <div class="imgs" id="edImages"></div>
+  <button class="small" id="edAddPhoto" style="margin-bottom:8px">+ Add photo</button>
+  <input type="file" id="photoInput" accept="image/*" style="display:none">
   <div class="row"><input type="checkbox" id="edTask"><label for="edTask" style="font-size:12px">Needs work (task)</label></div>
   <div class="row" id="edDoneRow" style="display:none"><input type="checkbox" id="edDone"><label for="edDone" style="font-size:12px">Done</label></div>
   <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
@@ -318,6 +332,8 @@ function updateDrawUI(){
 }
 window.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
+    const lb=document.getElementById('lightbox');
+    if(lb.style.display==='flex'){lb.style.display='none';return}
     if(canFinish())finishDraw();
     if(stampTpl){armStamp(null);return}
     setMode(null);closeEditor();
@@ -458,7 +474,7 @@ function openEditor(id){
   document.getElementById('edTask').checked=!!f.properties.task;
   document.getElementById('edDone').checked=!!f.properties.done;
   document.getElementById('edDoneRow').style.display=f.properties.task?'flex':'none';
-  refreshList();
+  renderImages();refreshList();
 }
 function closeEditor(){ed.style.display='none';selId=null;refreshHighlight();refreshList()}
 function bindEd(id,prop,attr){document.getElementById(id).addEventListener('input',e=>{
@@ -495,6 +511,7 @@ function featRow(f,label){
   const d=document.createElement('div');d.className='feat'+(f.id===selId?' sel':'');
   d.innerHTML=`<span class="dot" style="background:${f.properties.color}"></span>
     <span class="nm">${esc(label)}</span>
+    ${featImages(f).length?'<span class="ct">'+featImages(f).length+' pic</span>':''}
     ${f.properties.task&&!f.properties.done?'<span class="flag">task</span>':''}`;
   d.onclick=()=>{flyTo(f);openEditor(f.id)};
   return d;
@@ -534,6 +551,62 @@ function flyTo(f){
   let c=g.type==='Point'?g.coordinates:(g.type==='Polygon'?g.coordinates[0][0]:g.coordinates[0]);
   map.flyTo({center:c,zoom:Math.max(map.getZoom(),19)});
 }
+
+// ---------- feature images ----------
+function featImages(f){return Array.isArray(f.properties.images)?f.properties.images:[]}
+function renderImages(){
+  const box=document.getElementById('edImages');box.innerHTML='';
+  const f=data.features.find(x=>x.id===selId);
+  document.getElementById('edAddPhoto').style.display=canEdit?'inline-block':'none';
+  if(!f)return;
+  for(const [i,img] of featImages(f).entries()){
+    const fig=document.createElement('figure');
+    const el=document.createElement('img');
+    el.src=img.url;el.alt=img.credit||f.properties.name||'';el.loading='lazy';
+    el.onclick=()=>openLightbox(img);
+    fig.appendChild(el);
+    if(canEdit){
+      const b=document.createElement('button');b.className='rm';b.textContent='x';b.title='Remove';
+      b.onclick=async(e)=>{
+        e.stopPropagation();
+        if(!confirm('Remove this picture from this feature?'))return;
+        f.properties.images=featImages(f).filter((_,j)=>j!==i);
+        renderImages();refresh();dbUpsertFeature(f);
+        if(img.storage)await sb.storage.from('overlays').remove([img.storage]);
+      };
+      fig.appendChild(b);
+    }
+    box.appendChild(fig);
+  }
+}
+function openLightbox(img){
+  document.getElementById('lbImg').src=img.url;
+  document.getElementById('lbCap').textContent=[img.credit,img.source].filter(Boolean).join(' · ');
+  document.getElementById('lightbox').style.display='flex';
+}
+document.getElementById('lightbox').onclick=()=>{document.getElementById('lightbox').style.display='none'};
+document.getElementById('edAddPhoto').onclick=()=>document.getElementById('photoInput').click();
+document.getElementById('photoInput').addEventListener('change',e=>{
+  const file=e.target.files[0];e.target.value='';
+  if(!file)return;
+  const f=data.features.find(x=>x.id===selId);if(!f||!canEdit)return;
+  const im=new Image();
+  im.onload=async()=>{
+    const cv=document.createElement('canvas');
+    const sc=Math.min(1,1600/Math.max(im.width,im.height));
+    cv.width=im.width*sc;cv.height=im.height*sc;
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.85));
+    const path=`features/${f.id}-${uid()}.jpg`;
+    sync(true,'uploading photo…');
+    const {error}=await sb.storage.from('overlays').upload(path,blob,{contentType:'image/jpeg'});
+    if(error){sync(false,'photo upload failed — signed in as a steward?');return}
+    const {data:{publicUrl}}=sb.storage.from('overlays').getPublicUrl(path);
+    f.properties.images=[...featImages(f),{url:publicUrl,storage:path,credit:'Photo by a steward'}];
+    renderImages();refresh();dbUpsertFeature(f);
+  };
+  im.src=URL.createObjectURL(file);
+});
 
 // ---------- selection highlight ----------
 function selFilter(geom){
